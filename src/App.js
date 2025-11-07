@@ -42,14 +42,19 @@ function App() {
   const [pendingMonsterCard, setPendingMonsterCard] = useState(null);
   const [showRules, setShowRules] = useState(false); // toggle rules visibility
 
+  // Deal a room
   const dealRoom = () => {
-    if (deck.length < 4) {
+    if (deck.length + hand.length < 1) {
       setMessage('You cleared the dungeon! You win!');
       setHand([]);
       return;
     }
-    const newHand = deck.slice(0, 4);
-    const newDeck = deck.slice(4);
+
+    // Combine remaining hand with deck
+    const totalCards = [...hand, ...deck];
+    const newHand = totalCards.slice(0, 4);
+    const newDeck = totalCards.slice(4);
+
     setHand(newHand);
     setDeck(newDeck);
     setCardsPlayedThisRoom(0);
@@ -70,14 +75,16 @@ function App() {
       return;
     }
 
-    setHp(result.newHp);
+    // Update HP but cap at 20
+    setHp(Math.min(result.newHp, 20));
+
     setWeapon(result.newWeapon);
     setHand(result.newHand);
     setDiscard(result.newDiscard);
     setCardsPlayedThisRoom(result.newCardsPlayed);
     setMessage(result.msg);
 
-    // Reset "last used on" if the card is a weapon
+    // Reset "last used on" if equipping a weapon
     if (card.type === 'weapon') {
       setWeaponLastUsedOn(null);
     }
@@ -118,7 +125,7 @@ function App() {
       setWeaponLastUsedOn(pendingMonsterCard.value);
     }
 
-    setHp(result.newHp);
+    setHp(Math.min(result.newHp, 20));
     setWeapon(result.newWeapon);
     setHand(result.newHand);
     setDiscard(result.newDiscard);
@@ -138,6 +145,8 @@ function App() {
 
   const runRoom = () => {
     if (gameOver) return;
+
+    // Keep current hand in deck
     setDeck([...deck, ...hand]);
     setHand([]);
     setCardsPlayedThisRoom(0);
@@ -178,6 +187,7 @@ function App() {
         <>
           <h1>Scoundrel</h1>
           <p>HP: {hp}</p>
+          <p>Cards left in deck: {deck.length}</p>
           {weapon && (
             <p>
               Equipped: {weapon.value} {weaponLastUsedOn !== null && `(Last used on: ${weaponLastUsedOn})`}
@@ -185,6 +195,7 @@ function App() {
           )}
           <p>{message}</p>
 
+          {/* Pending monster */}
           {pendingMonsterCard && (
             <div style={{ marginTop: '20px' }}>
               <h3>A monster appears!</h3>
@@ -235,6 +246,7 @@ function App() {
             </div>
           )}
 
+          {/* Player hand */}
           <div
             style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '20px' }}
           >
@@ -264,6 +276,7 @@ function App() {
             ))}
           </div>
 
+          {/* Run / Skip Room */}
           <button
             onClick={runRoom}
             style={{ marginTop: '20px', padding: '10px 20px', cursor: 'pointer' }}
@@ -277,7 +290,7 @@ function App() {
             </p>
           )}
 
-          {/* Toggle Rules Button */}
+          {/* Toggle Rules */}
           <div style={{ marginTop: '30px' }}>
             <button
               onClick={() => setShowRules(!showRules)}
@@ -287,7 +300,6 @@ function App() {
             </button>
           </div>
 
-          {/* Collapsible Rules */}
           {showRules && (
             <div
               style={{
@@ -312,6 +324,7 @@ function App() {
                 <li>After playing 3 cards in a room, the room ends and a new room is dealt.</li>
                 <li>You may run to the next room before playing any cards, but not after starting a fight.</li>
                 <li>Clear all rooms to win the game!</li>
+                <li>Remaining unplayed cards carry over to the next room.</li>
               </ul>
             </div>
           )}
