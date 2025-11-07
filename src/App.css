@@ -1,0 +1,41 @@
+body {
+  margin: 0;
+  background-color: #2e2e2e;
+  color: #f0f0f0;
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+}
+
+.hand {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.run-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.run-btn:hover {
+  background-color: #45a049;
+}
+
+.discard {
+  margin-top: 40px;
+  position: relative;
+  height: 160px; /* leave space for fanning cards */
+}
+
+.discard-cards {
+  position: relative;
+  width: 200px; /* width of the stack */
+  margin: 0 auto;
+  height: 140px;
+}
