@@ -246,7 +246,8 @@ function App() {
             </div>
           </div>
 
-          <p>Cards left in deck: {deck.length}</p>
+          {/* Updated Deck Count */}
+          <p>Cards left: {deck.length + hand.length}</p>
           <p>{message}</p>
 
           {/* Monster prompt */}
